@@ -1,10 +1,4 @@
 <!--
-  This is the template for every Libre DevOps Terraform module. When you create a module from it:
-    - replace the title, tagline, and the CI workflow / repo name in the badge URLs
-    - replace the resources in main.tf, and the variables, outputs, and examples to match
-    - run `just docs` (or Sort-LdoTerraform.ps1) to regenerate the section between the markers
--->
-<!--
   Keep the title and badges OUTSIDE the centered <div>: the Terraform Registry's markdown renderer
   does not parse markdown inside an HTML block, so a # heading or [![badge]] in the div renders as
   literal text on the registry. Only the logo (HTML) goes in the div.
@@ -18,33 +12,50 @@
   </a>
 </div>
 
-# Terraform Module Template
+# Terraform Azure Cosmos DB Table
 
-A starting point for Libre DevOps Terraform modules: the standard file layout, examples, tests, and tooling.
+Tables for Azure Cosmos DB for Table, in an existing account, with throughput or autoscale where the account is provisioned.
 
-[![CI](https://github.com/libre-devops/terraform-module-template/actions/workflows/ci.yml/badge.svg)](https://github.com/libre-devops/terraform-module-template/actions/workflows/ci.yml)
-[![Release](https://img.shields.io/github/v/release/libre-devops/terraform-module-template?sort=semver&label=release)](https://github.com/libre-devops/terraform-module-template/releases/latest)
+[![CI](https://github.com/libre-devops/terraform-azurerm-cosmosdb-table/actions/workflows/ci.yml/badge.svg)](https://github.com/libre-devops/terraform-azurerm-cosmosdb-table/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/libre-devops/terraform-azurerm-cosmosdb-table?sort=semver&label=release)](https://github.com/libre-devops/terraform-azurerm-cosmosdb-table/releases/latest)
 [![Terraform Registry](https://img.shields.io/badge/registry-libre--devops-7B42BC?logo=terraform&logoColor=white)](https://registry.terraform.io/namespaces/libre-devops)
-[![License](https://img.shields.io/github/license/libre-devops/terraform-module-template)](./LICENSE)
+[![License](https://img.shields.io/github/license/libre-devops/terraform-azurerm-cosmosdb-table)](./LICENSE)
 
 ---
+
+## Overview
+
+API for Table tables keyed by name, in an existing Cosmos DB account passed by id (its name and
+resource group are parsed from it). Tables are made through Azure Resource Manager, so they work
+with the account's key based authentication off. On a **serverless** account leave throughput
+unset; on a **provisioned** account give a table manual `throughput` or an
+`autoscale_max_throughput` ceiling, or neither for the account's default. Table names follow the
+rule Table Storage shares (3 to 63 letters and digits, starting with a letter), so a set of tables
+can move between the two services.
+
+The account, and the data plane roles that grant access to its tables, come from the
+`cosmosdb-account` module.
 
 ## Usage
 
 ```hcl
-module "this" {
-  source = "libre-devops/<module>/azurerm"
+module "tables" {
+  source  = "libre-devops/cosmosdb-table/azurerm"
+  version = "~> 1.0"
 
-  name     = "rg-ldo-uks-dev-01"
-  location = "uksouth"
-  tags     = { environment = "dev" }
+  cosmosdb_account_id = module.cosmosdb.ids["cosmos-ldo-uks-dev-001"]
+
+  tables = {
+    devices     = {}
+    escalations = {}
+  }
 }
 ```
 
 ## Examples
 
-- [`examples/minimal`](./examples/minimal) - the smallest valid call (required inputs only).
-- [`examples/complete`](./examples/complete) - every supported input exercised.
+- [`examples/minimal`](./examples/minimal) - one table in a serverless account.
+- [`examples/complete`](./examples/complete) - a provisioned account with a manual and an autoscale table, and a data reader role from the account module.
 
 ## Developing
 

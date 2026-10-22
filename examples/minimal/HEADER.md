@@ -14,8 +14,8 @@
 
 # Minimal example
 
-The smallest valid call to this module: required inputs only. The environment comes from the
-Terraform workspace (`terraform.workspace`), not a variable. Run it with `just e2e minimal`, which
-applies the stack then always destroys it.
+One table in a serverless API for Table account made by the cosmosdb-account module. The
+environment comes from the Terraform workspace (`terraform.workspace`), not a variable. Run it with
+`just e2e minimal`, which applies the stack then always destroys it.
 
 [![Terraform Registry](https://img.shields.io/badge/registry-libre--devops-7B42BC?logo=terraform&logoColor=white)](https://registry.terraform.io/namespaces/libre-devops)

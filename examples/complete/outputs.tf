@@ -1,9 +1,9 @@
 output "ids" {
-  description = "Map of resource group name to id."
-  value       = module.this.ids
+  description = "Map of table name to id."
+  value       = module.tables.ids
 }
 
 output "names" {
-  description = "Map of resource group name to name."
-  value       = module.this.names
+  description = "The table names."
+  value       = module.tables.names
 }

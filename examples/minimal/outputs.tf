@@ -1,9 +1,9 @@
 output "ids" {
-  description = "Map of resource group name to id."
-  value       = module.this.ids
+  description = "Map of table name to id."
+  value       = module.tables.ids
 }
 
-output "names" {
-  description = "Map of resource group name to name."
-  value       = module.this.names
+output "table_endpoint" {
+  description = "The account's Table endpoint."
+  value       = module.cosmosdb.table_endpoints[local.account_name]
 }

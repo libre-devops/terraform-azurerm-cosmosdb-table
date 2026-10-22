@@ -14,8 +14,9 @@
 
 # Complete example
 
-Exercises the fuller surface of this module. The environment comes from the Terraform workspace
-(`terraform.workspace`), not a variable. Run it with `just e2e complete`, which applies the stack
-then always destroys it.
+A provisioned API for Table account from the cosmosdb-account module, with the deployer holding
+the built-in data reader role, and two tables: one with manual throughput and one with an autoscale
+ceiling. The environment comes from the Terraform workspace, not a variable. Run it with
+`just e2e complete`, which applies the stack then always destroys it.
 
 [![Terraform Registry](https://img.shields.io/badge/registry-libre--devops-7B42BC?logo=terraform&logoColor=white)](https://registry.terraform.io/namespaces/libre-devops)

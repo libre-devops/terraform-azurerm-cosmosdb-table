@@ -1,14 +1,20 @@
-# Replace these with the resources your module manages. The placeholder creates resource groups
-# from a list(object), keyed into a map for a stable for_each (never count for named resources).
-# Keep to the standard: resources in main.tf only, "this" as the label, for_each over a map.
-locals {
-  resource_group_map = { for rg in var.resource_groups : rg.name => rg }
-}
+# API for Table tables keyed by name, in an existing account passed by id and parsed. Created through
+# Azure Resource Manager, so they work with the account's key based authentication off. Throughput is
+# manual or autoscale on a provisioned account, and absent on a serverless one. Data plane access to
+# the tables is granted by the account's own roles (the cosmosdb-account module's
+# table_role_assignments).
+resource "azurerm_cosmosdb_table" "this" {
+  for_each = var.tables
 
-resource "azurerm_resource_group" "this" {
-  for_each = local.resource_group_map
+  name                = each.key
+  resource_group_name = local.resource_group_name
+  account_name        = local.account_name
+  throughput          = each.value.throughput
 
-  name     = each.value.name
-  location = each.value.location
-  tags     = each.value.tags
+  dynamic "autoscale_settings" {
+    for_each = each.value.autoscale_max_throughput != null ? [each.value.autoscale_max_throughput] : []
+    content {
+      max_throughput = autoscale_settings.value
+    }
+  }
 }
